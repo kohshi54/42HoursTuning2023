@@ -278,28 +278,20 @@ export const getUserForFilter = async (
   neverMatchedFilter: boolean,
   numOfMembers: number,
   members: UserForFilter[]
-): Promise<UserForFilter> => {
-  let userRows: RowDataPacket[];
+): Promise<UserForFilter[]> => {
+  // Select users
+  let userIdRows: RowDataPacket[];
   let sql = `SELECT
-			u.user_id,
-			u.user_name,
-			u.office_id,
-			o.office_name,
-			u.user_icon_id,
-			d.department_id,
-			d.department_name,
-			f.file_name,
-			s.skill_name
+			DISTINCT u.user_id
 		FROM
 			user u
 			JOIN department_role_member drm USING(user_id)
 			JOIN department d USING(department_id)
 			JOIN office o USING(office_id)
-			JOIN file f ON u.user_icon_id = f.file_id
 			JOIN skill_member sm USING(user_id)
 			JOIN skill s USING(skill_id) `
 			;
-  let condition = " WHERE user_id NOT IN (?) AND drm.belong = 1 ";
+  let condition = " WHERE user_id NOT IN (?) AND drm.belong = true ";
   let args: any[] = [members.map((row) => row.userId)];
   if (departmentFilter != "none") {
   	if (departmentFilter == "onlyMyDepartment") {
@@ -325,15 +317,51 @@ export const getUserForFilter = async (
   	condition += " AND user_id NOT IN (SELECT DISTINCT user_id FROM match_group_member WHERE user_id = ?) ";
 	args.push(owner.userId);
   }
-  sql += condition + ' ORDER BY RAND() LIMIT 1 ';
+  sql += condition + ' LIMIT ? ';
   args.push(numOfMembers);
-  [userRows] = await pool.query<RowDataPacket[]>(
+  [userIdRows] = await pool.query<RowDataPacket[]>(
       sql,
       args
     );
-  const user = userRows[0];
+  // Retrieve users
+  let userRows: RowDataPacket[];
+  sql = `SELECT
+			u.user_id,
+			u.user_name,
+			u.office_id,
+			o.office_name,
+			u.user_icon_id,
+			d.department_id,
+			d.department_name,
+			f.file_name,
+			s.skill_name
+		FROM
+			user u
+			JOIN department_role_member drm USING(user_id)
+			JOIN department d USING(department_id)
+			JOIN office o USING(office_id)
+			JOIN file f ON u.user_icon_id = f.file_id
+			JOIN skill_member sm USING(user_id)
+			JOIN skill s USING(skill_id)
+		WHERE
+			u.user_id IN (?) AND drm.belong = true `;
+  [userRows] = await pool.query<RowDataPacket[]>(
+      sql,
+      [userIdRows.map((row) => row.user_id)]
+    );
 
-  user.skill_names = userRows.map((row) => row.skill_name);
+  const users = userIdRows;
+console.log(userIdRows, users, userRows);
+  users.forEach((o, i, a) => a[i].user_name = userRows.find((u) => u.user_id == o.user_id)!.user_name as string);
+  users.forEach((o, i, a) => a[i].office_id = userRows.find((u) => u.user_id == o.user_id)!.office_id as string);
+  users.forEach((o, i, a) => a[i].office_name = userRows.find((u) => u.user_id == o.user_id)!.office_name as string);
+  users.forEach((o, i, a) => a[i].user_icon_id = userRows.find((u) => u.user_id == o.user_id)!.user_name as string);
+  users.forEach((o, i, a) => a[i].department_id = userRows.find((u) => u.user_id == o.user_id)!.department_id as string);
+  users.forEach((o, i, a) => a[i].department_name = userRows.find((u) => u.user_id == o.user_id)!.department_name as string);
+  users.forEach((o, i, a) => a[i].file_name = userRows.find((u) => u.user_id == o.user_id)!.file_name as string);
+  users.forEach((o, i, a) => a[i].user_name = userRows.find((u) => u.user_id == o.user_id)!.user_name as string);
+  users.forEach((o, i, a) => a[i].skill_names = userRows.filter((u) => u.user_id == o.user_id).map((u) => u.skill_name));
 
-  return convertToUserForFilter(user);
+console.log(users);
+  return users.map((u) => convertToUserForFilter(u));
 };
