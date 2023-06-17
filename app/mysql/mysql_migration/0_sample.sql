@@ -7,3 +7,4 @@ ALTER TABLE user ADD FULLTEXT INDEX ngram_idx (user_name) WITH PARSER ngram;
 ALTER TABLE user ADD FULLTEXT INDEX ngram_idx (mail) WITH PARSER ngram;
 ALTER TABLE user ADD FULLTEXT INDEX ngram_idx (kana) WITH PARSER ngram;
 ALTER TABLE user ADD INDEX mail_idx(mail);
+ALTER TABLE user ADD INDEX entry_date_kana_idx(entry_date, kana);
