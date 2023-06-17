@@ -1,0 +1,173 @@
+
+# 13.5s user time, 40ms system time, 30.77M rss, 37.75M vsz
+# Current date: Sat Jun 17 09:55:48 2023
+# Hostname: env-elephant
+# Files: /home/azureuser/42HoursTuning2023/app/mysql/log/mysql-slow.log
+# Overall: 168.00k total, 27 unique, 469.27 QPS, 8.93x concurrency _______
+# Time range: 2023-06-17T09:49:30 to 2023-06-17T09:55:28
+# Attribute          total     min     max     avg     95%  stddev  median
+# ============     ======= ======= ======= ======= ======= ======= =======
+# Exec time          3196s    58us     15s    19ms    78ms   164ms   690us
+# Lock time             1s       0    59ms     6us     1us   214us     1us
+# Rows sent        230.93k       0      43    1.41    2.90    1.78    0.99
+# Rows examine      43.49M       0 292.99k  271.46   44.60   8.36k    0.99
+# Query size        18.88M      16     184  117.85  183.58   38.07  118.34
+
+# Profile
+# Rank Query ID                      Response time  Calls R/Call V/M   Ite
+# ==== ============================= ============== ===== ====== ===== ===
+#    1 0xD1948A89F181EF72983D02D7... 987.0076 30.9% 27046 0.0365  0.07 SELECT skill skill_member
+#    2 0x084A5227610B875F54D33C2D... 808.6836 25.3% 27046 0.0299  0.07 SELECT department department_role_member
+#    3 0x9D433381BF94E5B79D60DB80... 637.3022 19.9% 26900 0.0237  0.07 SELECT user
+#    4 0xA1AA85DC0648381770164D58... 557.0596 17.4%   146 3.8155  4.11 SELECT user
+#    5 0x58CF7EFC0668757DA8022308...  80.9121  2.5% 36974 0.0022  0.04 SELECT file
+# MISC 0xMISC                        125.1222  3.9% 49885 0.0025   0.0 <22 ITEMS>
+
+# Query 1: 140.13 QPS, 5.11x concurrency, ID 0xD1948A89F181EF72983D02D7DCE38796 at byte 23695561
+# Scores: V/M = 0.07
+# Time range: 2023-06-17T09:49:31 to 2023-06-17T09:52:44
+# Attribute    pct   total     min     max     avg     95%  stddev  median
+# ============ === ======= ======= ======= ======= ======= ======= =======
+# Count         16   27046
+# Exec time     30    987s   324us   794ms    36ms   134ms    52ms    19ms
+# Lock time     25   259ms       0    59ms     9us     1us   388us     1us
+# Rows sent     34  79.23k       0       3    3.00    2.90    0.02    2.90
+# Rows examine   2   1.19M      43      46   46.00   44.60    0.01   44.60
+# Query size    18   3.53M     113     137  136.87  136.99    1.78  136.99
+# String:
+# Hosts        172.23.0.5
+# Users        mysql
+# Query_time distribution
+#   1us
+#  10us
+# 100us  ##########################################
+#   1ms  ############
+#  10ms  ################################################################
+# 100ms  ############
+#    1s
+#  10s+
+# Tables
+#    SHOW TABLE STATUS LIKE 'skill'\G
+#    SHOW CREATE TABLE `skill`\G
+#    SHOW TABLE STATUS LIKE 'skill_member'\G
+#    SHOW CREATE TABLE `skill_member`\G
+# EXPLAIN /*!50100 PARTITIONS*/
+SELECT skill_name FROM skill WHERE skill_id IN (SELECT skill_id FROM skill_member WHERE user_id = '2e9fedb1-099d-46d2-9237-d4fe17821550')\G
+
+# Query 2: 140.13 QPS, 4.19x concurrency, ID 0x084A5227610B875F54D33C2D4386144B at byte 23861466
+# Scores: V/M = 0.07
+# Time range: 2023-06-17T09:49:31 to 2023-06-17T09:52:44
+# Attribute    pct   total     min     max     avg     95%  stddev  median
+# ============ === ======= ======= ======= ======= ======= ======= =======
+# Count         16   27046
+# Exec time     25    809s   160us   858ms    30ms   116ms    46ms    13ms
+# Lock time     17   183ms       0    16ms     6us     1us   197us     1us
+# Rows sent     11  26.41k       1       1       1       1       0       1
+# Rows examine   0 327.67k       2      23   12.41   21.45    6.19   11.95
+# Query size    25   4.74M     160     184  183.87  183.58    1.83  183.58
+# String:
+# Hosts        172.23.0.5
+# Users        mysql
+# Query_time distribution
+#   1us
+#  10us
+# 100us  ##############################################
+#   1ms  ################
+#  10ms  ################################################################
+# 100ms  #########
+#    1s
+#  10s+
+# Tables
+#    SHOW TABLE STATUS LIKE 'department'\G
+#    SHOW CREATE TABLE `department`\G
+#    SHOW TABLE STATUS LIKE 'department_role_member'\G
+#    SHOW CREATE TABLE `department_role_member`\G
+# EXPLAIN /*!50100 PARTITIONS*/
+SELECT department_name FROM department WHERE department_id = (SELECT department_id FROM department_role_member WHERE user_id = '32c1e2fc-d8b0-4a21-95db-13a5792ac5a6' AND belong = true)\G
+
+# Query 3: 139.38 QPS, 3.30x concurrency, ID 0x9D433381BF94E5B79D60DB80F4EFEA8A at byte 23629861
+# Scores: V/M = 0.07
+# Time range: 2023-06-17T09:49:31 to 2023-06-17T09:52:44
+# Attribute    pct   total     min     max     avg     95%  stddev  median
+# ============ === ======= ======= ======= ======= ======= ======= =======
+# Count         16   26900
+# Exec time     19    637s   138us   685ms    24ms    95ms    40ms     7ms
+# Lock time     15   159ms       0    18ms     5us     1us   176us     1us
+# Rows sent     11  26.27k       1       1       1       1       0       1
+# Rows examine   0  26.27k       1       1       1       1       0       1
+# Query size    16   3.18M     124     124     124     124       0     124
+# String:
+# Hosts        172.23.0.5
+# Users        mysql
+# Query_time distribution
+#   1us
+#  10us
+# 100us  #########################################################
+#   1ms  ######################
+#  10ms  ################################################################
+# 100ms  #######
+#    1s
+#  10s+
+# Tables
+#    SHOW TABLE STATUS LIKE 'user'\G
+#    SHOW CREATE TABLE `user`\G
+# EXPLAIN /*!50100 PARTITIONS*/
+SELECT user_id, user_name, office_id, user_icon_id FROM user WHERE user_id >= '87e56688-ee81-4e94-8bd7-11d2c1f4172b' limit 1\G
+
+# Query 4: 0.94 QPS, 3.57x concurrency, ID 0xA1AA85DC0648381770164D586EDDBC3A at byte 16219335
+# Scores: V/M = 4.11
+# Time range: 2023-06-17T09:49:30 to 2023-06-17T09:52:06
+# Attribute    pct   total     min     max     avg     95%  stddev  median
+# ============ === ======= ======= ======= ======= ======= ======= =======
+# Count          0     146
+# Exec time     17    557s   276ms     15s      4s     13s      4s      2s
+# Lock time      0   248us     1us    17us     1us     2us     1us     1us
+# Rows sent      1   2.85k      20      20      20      20       0      20
+# Rows examine  96  41.77M 292.99k 292.99k 292.99k 292.99k       0 292.99k
+# Query size     0  15.97k     112     112     112     112       0     112
+# String:
+# Hosts        172.23.0.5
+# Users        mysql
+# Query_time distribution
+#   1us
+#  10us
+# 100us
+#   1ms
+#  10ms
+# 100ms  ####################
+#    1s  ################################################################
+#  10s+  ############
+# Tables
+#    SHOW TABLE STATUS LIKE 'user'\G
+#    SHOW CREATE TABLE `user`\G
+# EXPLAIN /*!50100 PARTITIONS*/
+SELECT user_id, user_name, office_id, user_icon_id FROM user ORDER BY entry_date ASC, kana ASC LIMIT 20 OFFSET 0\G
+
+# Query 5: 191.58 QPS, 0.42x concurrency, ID 0x58CF7EFC0668757DA802230818738B53 at byte 23860914
+# Scores: V/M = 0.04
+# Time range: 2023-06-17T09:49:31 to 2023-06-17T09:52:44
+# Attribute    pct   total     min     max     avg     95%  stddev  median
+# ============ === ======= ======= ======= ======= ======= ======= =======
+# Count         22   36974
+# Exec time      2     81s    58us   335ms     2ms     9ms     9ms   108us
+# Lock time     13   143ms       0     9ms     3us     1us   100us     1us
+# Rows sent     15  36.11k       1       1       1       1       0       1
+# Rows examine   0  36.11k       1       1       1       1       0       1
+# Query size    14   2.79M      57      81   79.02   80.10    6.38   80.10
+# String:
+# Hosts        172.23.0.5
+# Users        mysql
+# Query_time distribution
+#   1us
+#  10us  #################################
+# 100us  ################################################################
+#   1ms  ############################
+#  10ms  #####
+# 100ms  #
+#    1s
+#  10s+
+# Tables
+#    SHOW TABLE STATUS LIKE 'file'\G
+#    SHOW CREATE TABLE `file`\G
+# EXPLAIN /*!50100 PARTITIONS*/
+SELECT file_name FROM file WHERE file_id = 'd425404e-ea81-46f6-b6fc-d5c15959c9bb'\G
