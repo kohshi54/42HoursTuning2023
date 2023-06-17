@@ -1,3 +1,4 @@
+import {v4 as uuidv4} from 'uuid';
 import { RowDataPacket } from "mysql2";
 import pool from "../../util/mysql";
 import { SearchedUser, User, UserForFilter } from "../../model/types";
@@ -240,8 +241,10 @@ export const getUserForFilter = async (
 ): Promise<UserForFilter> => {
   let userRows: RowDataPacket[];
   if (!userId) {
+	  let uuid=uuidv4();
     [userRows] = await pool.query<RowDataPacket[]>(
-      "SELECT user_id, user_name, office_id, user_icon_id FROM user ORDER BY RAND() LIMIT 1"
+      "SELECT user_id, user_name, office_id, user_icon_id FROM user WHERE user_id >= ? limit 1",
+      [uuid]
     );
   } else {
     [userRows] = await pool.query<RowDataPacket[]>(

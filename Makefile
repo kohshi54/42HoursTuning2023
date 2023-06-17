@@ -58,8 +58,6 @@ bench: rotate
 	$(MAKE) top &
 	$(MAKE) dstat &
 	cd $(BENCH_DIR) && ./run_k6_and_score.sh
-	sleep 120
-	$(MAKE) slow-query
 	$(MAKE) alp
 
 .PHONY: build
