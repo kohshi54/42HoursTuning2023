@@ -1,0 +1,231 @@
+
+# 390ms user time, 0 system time, 30.36M rss, 35.62M vsz
+# Current date: Sat Jun 17 05:20:26 2023
+# Hostname: env-elephant
+# Files: /home/azureuser/42HoursTuning2023/app/mysql/log/mysql-slow.log
+# Overall: 1.54k total, 18 unique, 13.48 QPS, 4.20x concurrency __________
+# Time range: 2023-06-17T05:18:32 to 2023-06-17T05:20:26
+# Attribute          total     min     max     avg     95%  stddev  median
+# ============     ======= ======= ======= ======= ======= ======= =======
+# Exec time           478s    73us     13s   311ms      1s   842ms   366us
+# Lock time           23ms       0     8ms    14us     3us   247us     1us
+# Rows sent          6.40k       0      43    4.26   42.48   10.11    0.99
+# Rows examine     149.79M       0   5.73M  99.79k 283.86k 394.18k    0.99
+# Query size       116.03k      51     183   77.30  136.99   26.49   56.92
+
+# Profile
+# Rank Query ID                      Response time  Calls R/Call  V/M   It
+# ==== ============================= ============== ===== ======= ===== ==
+#    1 0xE9181969C7A64EB2831F7183... 172.2738 36.0%   156  1.1043  0.09 SELECT user
+#    2 0xA1AA85DC0648381770164D58...  87.4340 18.3%    82  1.0663  0.18 SELECT user
+#    3 0x38A8757FD25E2F5CAA153237...  76.0819 15.9%    83  0.9166  0.16 SELECT user
+#    4 0x3B178B78C510D2D5914BB0DE...  50.9922 10.7%     5 10.1984  0.34 SELECT match_group_member
+#    5 0xFB4E5496A2F2DDC4E111545D...  38.7514  8.1%    31  1.2500  0.06 SELECT user
+#    6 0x084A5227610B875F54D33C2D...  31.9662  6.7%     4  7.9915  0.67 SELECT department department_role_member
+#    7 0xA091B25D166066A891F3F530...  15.8511  3.3%    14  1.1322  0.15 SELECT user
+# MISC 0xMISC                          4.9328  1.0%  1162  0.0042   0.0 <11 ITEMS>
+
+# Query 1: 1.44 QPS, 1.60x concurrency, ID 0xE9181969C7A64EB2831F7183CA0EB042 at byte 351952
+# Scores: V/M = 0.09
+# Time range: 2023-06-17T05:18:35 to 2023-06-17T05:20:23
+# Attribute    pct   total     min     max     avg     95%  stddev  median
+# ============ === ======= ======= ======= ======= ======= ======= =======
+# Count         10     156
+# Exec time     36    172s   231ms      2s      1s      2s   307ms      1s
+# Lock time      1   330us     1us    19us     2us     3us     2us     1us
+# Rows sent      2     156       1       1       1       1       0       1
+# Rows examine  29  44.63M 292.97k 292.97k 292.97k 292.97k       0 292.97k
+# Query size    18  21.37k     139     141  140.29  136.99       0  136.99
+# String:
+# Hosts        172.22.0.4
+# Users        mysql
+# Query_time distribution
+#   1us
+#  10us
+# 100us
+#   1ms
+#  10ms
+# 100ms  #####################################
+#    1s  ################################################################
+#  10s+
+# Tables
+#    SHOW TABLE STATUS LIKE 'user'\G
+#    SHOW CREATE TABLE `user`\G
+# EXPLAIN /*!50100 PARTITIONS*/
+SELECT user_id FROM user WHERE mail = 'popy146@example.com' AND password = '2b9a57088cbdf4386bafedc5a3653538613587198532c24e7a40da3208150a77'\G
+
+# Query 2: 0.73 QPS, 0.78x concurrency, ID 0xA1AA85DC0648381770164D586EDDBC3A at byte 214165
+# Scores: V/M = 0.18
+# Time range: 2023-06-17T05:18:33 to 2023-06-17T05:20:25
+# Attribute    pct   total     min     max     avg     95%  stddev  median
+# ============ === ======= ======= ======= ======= ======= ======= =======
+# Count          5      82
+# Exec time     18     87s   302ms      2s      1s      2s   437ms      1s
+# Lock time      0   197us     1us    20us     2us     3us     2us     1us
+# Rows sent     25   1.60k      20      20      20      20       0      20
+# Rows examine  15  23.46M 292.99k 292.99k 292.99k 292.99k       0 292.99k
+# Query size     7   8.97k     112     112     112     112       0     112
+# String:
+# Hosts        172.22.0.4
+# Users        mysql
+# Query_time distribution
+#   1us
+#  10us
+# 100us
+#   1ms
+#  10ms
+# 100ms  #######################################################
+#    1s  ################################################################
+#  10s+
+# Tables
+#    SHOW TABLE STATUS LIKE 'user'\G
+#    SHOW CREATE TABLE `user`\G
+# EXPLAIN /*!50100 PARTITIONS*/
+SELECT user_id, user_name, office_id, user_icon_id FROM user ORDER BY entry_date ASC, kana ASC LIMIT 20 OFFSET 0\G
+
+# Query 3: 0.74 QPS, 0.68x concurrency, ID 0x38A8757FD25E2F5CAA15323718E2C2BC at byte 352290
+# Scores: V/M = 0.16
+# Time range: 2023-06-17T05:18:33 to 2023-06-17T05:20:25
+# Attribute    pct   total     min     max     avg     95%  stddev  median
+# ============ === ======= ======= ======= ======= ======= ======= =======
+# Count          5      83
+# Exec time     15     76s   239ms      2s   917ms      2s   387ms   900ms
+# Lock time     14     3ms       0     3ms    39us     3us   325us     1us
+# Rows sent      0       0       0       0       0       0       0       0
+# Rows examine  15  23.75M 292.97k 292.97k 292.97k 292.97k       0 292.97k
+# Query size     3   4.54k      56      56      56      56       0      56
+# String:
+# Hosts        172.22.0.4
+# Users        mysql
+# Query_time distribution
+#   1us
+#  10us
+# 100us
+#   1ms
+#  10ms
+# 100ms  ################################################################
+#    1s  ######################################################
+#  10s+
+# Tables
+#    SHOW TABLE STATUS LIKE 'user'\G
+#    SHOW CREATE TABLE `user`\G
+# EXPLAIN /*!50100 PARTITIONS*/
+SELECT user_id FROM user WHERE user_name LIKE '%常務%'\G
+
+# Query 4: 0.14 QPS, 1.42x concurrency, ID 0x3B178B78C510D2D5914BB0DE1802FCEB at byte 311155
+# Scores: V/M = 0.34
+# Time range: 2023-06-17T05:19:05 to 2023-06-17T05:19:41
+# Attribute    pct   total     min     max     avg     95%  stddev  median
+# ============ === ======= ======= ======= ======= ======= ======= =======
+# Count          0       5
+# Exec time     10     51s      8s     13s     10s     13s      2s     10s
+# Lock time      0     9us     1us     3us     1us     2us       0     1us
+# Rows sent      1      80      16      16      16      16       0      16
+# Rows examine  19  28.63M   5.73M   5.73M   5.73M   5.73M       0   5.73M
+# Query size     0     380      76      76      76      76       0      76
+# String:
+# Hosts        172.22.0.4
+# Users        mysql
+# Query_time distribution
+#   1us
+#  10us
+# 100us
+#   1ms
+#  10ms
+# 100ms
+#    1s  ##########################################
+#  10s+  ################################################################
+# Tables
+#    SHOW TABLE STATUS LIKE 'match_group_member'\G
+#    SHOW CREATE TABLE `match_group_member`\G
+# EXPLAIN /*!50100 PARTITIONS*/
+SELECT match_group_id FROM match_group_member WHERE user_id = 'test-user-id'\G
+
+# Query 5: 0.28 QPS, 0.35x concurrency, ID 0xFB4E5496A2F2DDC4E111545DB39D4F45 at byte 52109
+# Scores: V/M = 0.06
+# Time range: 2023-06-17T05:18:35 to 2023-06-17T05:20:25
+# Attribute    pct   total     min     max     avg     95%  stddev  median
+# ============ === ======= ======= ======= ======= ======= ======= =======
+# Count          2      31
+# Exec time      8     39s   385ms      2s      1s      2s   276ms      1s
+# Lock time      0    67us     1us     4us     2us     3us     1us     1us
+# Rows sent      0       0       0       0       0       0       0       0
+# Rows examine   5   8.87M 292.97k 292.97k 292.97k 292.97k       0 292.97k
+# Query size     1   1.54k      51      51      51      51       0      51
+# String:
+# Hosts        172.22.0.4
+# Users        mysql
+# Query_time distribution
+#   1us
+#  10us
+# 100us
+#   1ms
+#  10ms
+# 100ms  ######
+#    1s  ################################################################
+#  10s+
+# Tables
+#    SHOW TABLE STATUS LIKE 'user'\G
+#    SHOW CREATE TABLE `user`\G
+# EXPLAIN /*!50100 PARTITIONS*/
+SELECT user_id FROM user WHERE kana LIKE '%常務%'\G
+
+# Query 6: 0.12 QPS, 1.00x concurrency, ID 0x084A5227610B875F54D33C2D4386144B at byte 306863
+# Scores: V/M = 0.67
+# Time range: 2023-06-17T05:19:38 to 2023-06-17T05:20:10
+# Attribute    pct   total     min     max     avg     95%  stddev  median
+# ============ === ======= ======= ======= ======= ======= ======= =======
+# Count          0       4
+# Exec time      6     32s      6s     11s      8s     10s      2s     10s
+# Lock time      0    13us     2us     5us     3us     4us     1us     4us
+# Rows sent      0       4       1       1       1       1       0       1
+# Rows examine   8  13.14M   3.29M   3.29M   3.29M   3.29M       0   3.29M
+# Query size     0     640     160     160     160     160       0     160
+# String:
+# Hosts        172.22.0.4
+# Users        mysql
+# Query_time distribution
+#   1us
+#  10us
+# 100us
+#   1ms
+#  10ms
+# 100ms
+#    1s  ################################################################
+#  10s+  ################################################################
+# Tables
+#    SHOW TABLE STATUS LIKE 'department'\G
+#    SHOW CREATE TABLE `department`\G
+#    SHOW TABLE STATUS LIKE 'department_role_member'\G
+#    SHOW CREATE TABLE `department_role_member`\G
+# EXPLAIN /*!50100 PARTITIONS*/
+SELECT department_name FROM department WHERE department_id = (SELECT department_id FROM department_role_member WHERE user_id = 'test-user-id' AND belong = true)\G
+
+# Query 7: 0.14 QPS, 0.16x concurrency, ID 0xA091B25D166066A891F3F530A4293513 at byte 100992
+# Scores: V/M = 0.15
+# Time range: 2023-06-17T05:18:38 to 2023-06-17T05:20:18
+# Attribute    pct   total     min     max     avg     95%  stddev  median
+# ============ === ======= ======= ======= ======= ======= ======= =======
+# Count          0      14
+# Exec time      3     16s   438ms      2s      1s      2s   409ms      1s
+# Lock time      0    31us     1us     6us     2us     3us     1us     1us
+# Rows sent      0       0       0       0       0       0       0       0
+# Rows examine   2   4.01M 292.97k 292.97k 292.97k 292.97k       0 292.97k
+# Query size     0     714      51      51      51      51       0      51
+# String:
+# Hosts        172.22.0.4
+# Users        mysql
+# Query_time distribution
+#   1us
+#  10us
+# 100us
+#   1ms
+#  10ms
+# 100ms  ###################################
+#    1s  ################################################################
+#  10s+
+# Tables
+#    SHOW TABLE STATUS LIKE 'user'\G
+#    SHOW CREATE TABLE `user`\G
+# EXPLAIN /*!50100 PARTITIONS*/
+SELECT user_id FROM user WHERE mail LIKE '%常務%'\G
