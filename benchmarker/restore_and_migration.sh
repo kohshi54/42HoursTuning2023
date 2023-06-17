@@ -21,7 +21,7 @@ fi
 
 while :
 do
-    docker exec -it mysql bash -c "echo -n 'select 1;' | mysql app" &> /dev/null && break
+    docker exec -it mysql bash -c "echo -n 'select 1;' | mysql -u root app" &> /dev/null && break
     echo "mysqlコンテナの起動を待機しています..."
     sleep 1
 done
@@ -46,7 +46,7 @@ do
     fi
 
     echo "${fileName}を適用します..."
-    docker exec mysql bash -c "mysql app < /etc/mysql/mysql_migration/${fileName}"
+    docker exec mysql bash -c "mysql -u root app < /etc/mysql/mysql_migration/${fileName}"
     next=$(($next + 1))
 done
 
