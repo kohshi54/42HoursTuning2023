@@ -46,6 +46,8 @@ export const convertToUserForFilter = (row: RowDataPacket): UserForFilter => {
     officeName: row.office_name,
     departmentName: row.department_name,
     skillNames: row.skill_names,
+	departmentId: row.department_id,
+	officeId: row.office_id,
   };
 };
 

@@ -1,4 +1,3 @@
-import {v4 as uuidv4} from 'uuid';
 import { RowDataPacket } from "mysql2";
 import pool from "../../util/mysql";
 import { SearchedUser, User, UserForFilter } from "../../model/types";
@@ -236,62 +235,105 @@ export const getUsersByGoal = async (goal: string): Promise<SearchedUser[]> => {
   return getUsersByUserIds(userIds);
 };
 
-export const getUserForFilter = async (
-  userId?: string
+export const getUserForOwner = async (
+  userId: string
 ): Promise<UserForFilter> => {
   let userRows: RowDataPacket[];
-  if (!userId) {
-	userId = uuidv4();
-  }
-  //"SELECT user_id, user_name, office_id, user_icon_id FROM user WHERE user_id >= ? LIMIT 1",
   let sql = `SELECT
-		u.user_id,
-		u.user_name,
-		u.office_id,
-		u.user_icon_id,
-		d.department_name,
-		o.office_name,
-		f.file_name
-	FROM
-		user u
-		JOIN department_role_member drm USING(user_id)
-		JOIN department d USING(department_id)
-		JOIN office o USING(office_id)
-		JOIN file f ON u.user_icon_id = f.file_id
-	WHERE
-		user_id >= ?
-	LIMIT 1;`;
+			u.user_id,
+			u.user_name,
+			u.office_id,
+			o.office_name,
+			u.user_icon_id,
+			d.department_id,
+			d.department_name,
+			f.file_name,
+			s.skill_name
+		FROM
+			user u
+			JOIN department_role_member drm USING(user_id)
+			JOIN department d USING(department_id)
+			JOIN office o USING(office_id)
+			JOIN file f ON u.user_icon_id = f.file_id
+			JOIN skill_member sm USING(user_id)
+			JOIN skill s USING(skill_id)
+		WHERE
+			u.user_id = ? AND drm.belong = 1`;
   [userRows] = await pool.query<RowDataPacket[]>(
       sql,
       [userId]
     );
   const user = userRows[0];
 
-  /*
-  const [officeNameRow] = await pool.query<RowDataPacket[]>(
-    `SELECT office_name FROM office WHERE office_id = ?`,
-    [user.office_id]
-  );
-  const [fileNameRow] = await pool.query<RowDataPacket[]>(
-    `SELECT file_name FROM file WHERE file_id = ?`,
-    [user.user_icon_id]
-  );
-  const [departmentNameRow] = await pool.query<RowDataPacket[]>(
-    `SELECT department_name FROM department WHERE department_id = (SELECT department_id FROM department_role_member WHERE user_id = ? AND belong = true)`,
-    [user.user_id]
-  );
- */
-  const [skillNameRows] = await pool.query<RowDataPacket[]>(
-    `SELECT skill_name FROM skill WHERE skill_id IN (SELECT skill_id FROM skill_member WHERE user_id = ?)`,
-    [user.user_id]
-  );
+  user.skill_names = userRows.map((row) => row.skill_name);
 
-  /*
-  user.office_name = officeNameRow[0].office_name;
-  user.file_name = fileNameRow[0].file_name;
-  user.department_name = departmentNameRow[0].department_name;
- */
-  user.skill_names = skillNameRows.map((row) => row.skill_name);
+  return convertToUserForFilter(user);
+};
+
+export const getUserForFilter = async (
+  owner: UserForFilter,
+  departmentFilter: string,
+  officeFilter: string,
+  skillFilter: string[],
+  neverMatchedFilter: boolean,
+  numOfMembers: number,
+  members: UserForFilter[]
+): Promise<UserForFilter> => {
+  let userRows: RowDataPacket[];
+  let sql = `SELECT
+			u.user_id,
+			u.user_name,
+			u.office_id,
+			o.office_name,
+			u.user_icon_id,
+			d.department_id,
+			d.department_name,
+			f.file_name,
+			s.skill_name
+		FROM
+			user u
+			JOIN department_role_member drm USING(user_id)
+			JOIN department d USING(department_id)
+			JOIN office o USING(office_id)
+			JOIN file f ON u.user_icon_id = f.file_id
+			JOIN skill_member sm USING(user_id)
+			JOIN skill s USING(skill_id) `
+			;
+  let condition = " WHERE user_id NOT IN (?) AND drm.belong = 1 ";
+  let args: any[] = [members.map((row) => row.userId)];
+  if (departmentFilter != "none") {
+  	if (departmentFilter == "onlyMyDepartment") {
+ 		condition += " AND department_id = ? "
+	} else {
+ 		condition += " AND department_id != ? "
+	}
+	args.push(owner.departmentId);
+  }
+  if (officeFilter != "none") {
+  	if (officeFilter == "onlyMyOffice") {
+ 		condition += " AND office_id = ? "
+	} else {
+ 		condition += " AND office_id != ? "
+	}
+	args.push(owner.officeId);
+  }
+  if (skillFilter.length > 0) {
+  	condition += " AND s.skill_name IN (?) "
+	args.push(skillFilter);
+  }
+  if (neverMatchedFilter) {
+  	condition += " AND user_id NOT IN (SELECT DISTINCT user_id FROM match_group_member WHERE user_id = ?) ";
+	args.push(owner.userId);
+  }
+  sql += condition + ' ORDER BY RAND() LIMIT 1 ';
+  args.push(numOfMembers);
+  [userRows] = await pool.query<RowDataPacket[]>(
+      sql,
+      args
+    );
+  const user = userRows[0];
+
+  user.skill_names = userRows.map((row) => row.skill_name);
 
   return convertToUserForFilter(user);
 };

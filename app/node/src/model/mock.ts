@@ -126,6 +126,8 @@ export const mockMatchMembers: UserForFilter[] = [
     officeName: "office1",
     departmentName: "department1",
     skillNames: ["skill1"],
+	departmentId: "department_id_1",
+	officeId: "office_id_1",
   },
   {
     userId: "userId2",
@@ -137,6 +139,8 @@ export const mockMatchMembers: UserForFilter[] = [
     officeName: "office2",
     departmentName: "department2",
     skillNames: ["skill2"],
+	departmentId: "department_id_2",
+	officeId: "office_id_2",
   },
   {
     userId: "userId3",
@@ -148,6 +152,8 @@ export const mockMatchMembers: UserForFilter[] = [
     officeName: "office3",
     departmentName: "department3",
     skillNames: ["skill3"],
+	departmentId: "department_id_3",
+	officeId: "office_id_3",
   },
   {
     userId: "userId4",
@@ -159,6 +165,8 @@ export const mockMatchMembers: UserForFilter[] = [
     officeName: "office4",
     departmentName: "department1",
     skillNames: ["skill4"],
+	departmentId: "department_id_4",
+	officeId: "office_id_4",
   },
   {
     userId: "userId5",
@@ -170,6 +178,8 @@ export const mockMatchMembers: UserForFilter[] = [
     officeName: "office5",
     departmentName: "department1",
     skillNames: ["skill5"],
+	departmentId: "department_id_5",
+	officeId: "office_id_5",
   },
   {
     userId: "userId6",
@@ -181,6 +191,8 @@ export const mockMatchMembers: UserForFilter[] = [
     officeName: "office1",
     departmentName: "department6",
     skillNames: ["skill6"],
+	departmentId: "department_id_6",
+	officeId: "office_id_6",
   },
   {
     userId: "userId7",
@@ -192,6 +204,8 @@ export const mockMatchMembers: UserForFilter[] = [
     officeName: "office1",
     departmentName: "department7",
     skillNames: ["skill7"],
+	departmentId: "department_id_7",
+	officeId: "office_id_7",
   },
 ];
 

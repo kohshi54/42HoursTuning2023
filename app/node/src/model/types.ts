@@ -66,4 +66,6 @@ export interface MatchGroupDetail extends MatchGroup {
 export interface UserForFilter extends User {
   departmentName: string;
   skillNames: string[];
+  officeId: string;
+  departmentId: string;
 }

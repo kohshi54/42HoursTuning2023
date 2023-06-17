@@ -6,11 +6,10 @@ import {
 } from "../../model/types";
 import {
   getMatchGroupDetailByMatchGroupId,
-  getUserIdsBeforeMatched,
   hasSkillNameRecord,
   insertMatchGroup,
 } from "./repository";
-import { getUserForFilter } from "../users/repository";
+import { getUserForFilter, getUserForOwner } from "../users/repository";
 
 export const checkSkillsRegistered = async (
   skillNames: string[]
@@ -28,16 +27,24 @@ export const createMatchGroup = async (
   matchGroupConfig: MatchGroupConfig,
   timeout?: number
 ): Promise<MatchGroupDetail | undefined> => {
-  const owner = await getUserForFilter(matchGroupConfig.ownerId);
+  const owner = await getUserForOwner(matchGroupConfig.ownerId);
   let members: UserForFilter[] = [owner];
   const startTime = Date.now();
+  console.log(owner);
   while (members.length < matchGroupConfig.numOfMembers) {
     // デフォルトは50秒でタイムアウト
     if (Date.now() - startTime > (!timeout ? 50000 : timeout)) {
       console.error("not all members found before timeout");
       return;
     }
-    const candidate = await getUserForFilter();
+    const candidate = await getUserForFilter(owner, 
+		matchGroupConfig.departmentFilter,
+		matchGroupConfig.officeFilter,
+		matchGroupConfig.skillFilter,
+		matchGroupConfig.neverMatchedFilter,
+		matchGroupConfig.numOfMembers,
+		members);
+	/*
     if (
       matchGroupConfig.departmentFilter !== "none" &&
       !isPassedDepartmentFilter(
@@ -47,6 +54,7 @@ export const createMatchGroup = async (
       )
     ) {
       console.log(`${candidate.userId} is not passed department filter`);
+      console.log(candidate);
       continue;
     } else if (
       matchGroupConfig.officeFilter !== "none" &&
@@ -58,21 +66,17 @@ export const createMatchGroup = async (
     ) {
       console.log(`${candidate.userId} is not passed office filter`);
       continue;
-    } else if (
+    if (
       matchGroupConfig.skillFilter.length > 0 &&
       !matchGroupConfig.skillFilter.some((skill) =>
         candidate.skillNames.includes(skill)
       )
     ) {
       console.log(`${candidate.userId} is not passed skill filter`);
+	  console.log(candidate);
       continue;
-    } else if (
-      matchGroupConfig.neverMatchedFilter &&
-      !(await isPassedMatchFilter(matchGroupConfig.ownerId, candidate.userId))
-    ) {
-      console.log(`${candidate.userId} is not passed never matched filter`);
-      continue;
-    } else if (members.some((member) => member.userId === candidate.userId)) {
+	  */
+    if (members.some((member) => member.userId === candidate.userId)) {
       console.log(`${candidate.userId} is already added to members`);
       continue;
     }
@@ -94,6 +98,7 @@ export const createMatchGroup = async (
   return await getMatchGroupDetailByMatchGroupId(matchGroupId);
 };
 
+/*
 const isPassedDepartmentFilter = (
   departmentFilter: string,
   ownerDepartment: string,
@@ -113,10 +118,13 @@ const isPassedOfficeFilter = (
     ? ownerOffice === candidateOffice
     : ownerOffice !== candidateOffice;
 };
+*/
 
+/*
 const isPassedMatchFilter = async (ownerId: string, candidateId: string) => {
   const userIdsBeforeMatched = await getUserIdsBeforeMatched(ownerId);
   return userIdsBeforeMatched.every(
     (userIdBeforeMatched) => userIdBeforeMatched !== candidateId
   );
 };
+*/
