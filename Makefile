@@ -5,10 +5,37 @@ GITIGNORE_PATH:=$(HOME)/.gitignore
 ZSHRC_PATH:=$(HOME)/.zshrc
 VIMRC_PATH:=$(HOME)/.vimrc
 
-ALP_CONFIG_DIR:=$(HOME)/tool-config/alp
+REPO_DIR:=$(HOME)/42HoursTuning2023
+APP_DIR:=$(REPO_DIR)/app
+
+TOOL_CONFIG_DIR:=$(REPO_DIR)/tool-config
+
+ALP_CONFIG_DIR:=$(TOOL_CONFIG_DIR)/alp
 ALP_CONFIG:=$(ALP_CONFIG_DIR)/config.yml
-TRDSQL_DIR:=$(HOME)/tool-config/trdsql
+TRDSQL_DIR:=$(TOOL_CONFIG_DIR)/trdsql
 TRDSQL_SQL:=$(TRDSQL_DIR)/access.sql
+
+DURATION=75
+RESULT_DIR:=$(REPO_DIR)/results
+# RESULT_TOP_DIR:=$(RESULT_DIR)/top
+# RESULT_DSTAT_DIR:=$(RESULT_DIR)/dstat
+# RESULT_APP_DIR:=$(RESULT_DIR)/app
+# RESULT_SLOW_DIR:=$(RESULT_DIR)/slow
+RESULT_ALP_DIR:=$(RESULT_DIR)/alp
+
+NGINX_LOGDIR:=$(APP_DIR)/nginx/log
+NGINX_LOG:=$(NGINX_LOGDIR)/access.log
+NGINX_ERROR_LOG:=$(NGINX_LOGDIR)/error.log
+DB_LOGDIR:=$(APP_DIR)/mysql/log
+DB_SLOW_LOG:=$(DB_LOGDIR)/mysql-slow.log
+DB_ERROR_LOG:=$(DB_LOGDIR)/error.log
+
+.PHONY: alp
+alp:
+	mkdir -p $(RESULT_ALP_DIR)
+	$(eval n := $(shell (ls -l $(RESULT_ALP_DIR) || echo 1) | wc | awk '{print $$1}'))
+	alp ltsv --file=$(NGINX_LOG) --config=$(ALP_CONFIG) \
+		| tee $(RESULT_ALP_DIR)/$(n).digest
 
 .PHONY: setup
 setup: keygen install-tools oh-my-zsh zsh-setup

@@ -5,7 +5,8 @@ query_string: true              # boolean
 output: count,1xx,2xx,3xx,4xx,5xx,method,uri,min,avg,max,sum                    # string(comma separated)
 
 matching_groups:            # array
-  - api/.*
+- /_next/static/.*
+#  - api/.*
 #   - /api/isu/.+/icon
 #   - /api/isu/.+/graph
 #   - /api/isu/.+/condition
