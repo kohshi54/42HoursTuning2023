@@ -16,10 +16,10 @@ ALP_CONFIG:=$(ALP_CONFIG_DIR)/config.yml
 TRDSQL_DIR:=$(TOOL_CONFIG_DIR)/trdsql
 TRDSQL_SQL:=$(TRDSQL_DIR)/access.sql
 
-DURATION=75
+DURATION=120
 RESULT_DIR:=$(REPO_DIR)/results
-# RESULT_TOP_DIR:=$(RESULT_DIR)/top
-# RESULT_DSTAT_DIR:=$(RESULT_DIR)/dstat
+RESULT_TOP_DIR:=$(RESULT_DIR)/top
+RESULT_DSTAT_DIR:=$(RESULT_DIR)/dstat
 # RESULT_APP_DIR:=$(RESULT_DIR)/app
 RESULT_SLOW_DIR:=$(RESULT_DIR)/slow
 RESULT_ALP_DIR:=$(RESULT_DIR)/alp
@@ -30,6 +30,18 @@ NGINX_ERROR_LOG:=$(NGINX_LOGDIR)/error.log
 DB_LOGDIR:=$(APP_DIR)/mysql/log
 DB_SLOW_LOG:=$(DB_LOGDIR)/mysql-slow.log
 DB_ERROR_LOG:=$(DB_LOGDIR)/error.log
+
+.PHONY: top
+top:
+	mkdir -p $(RESULT_TOP_DIR)
+	$(eval n := $(shell (ls -l $(RESULT_TOP_DIR) || echo 1) | wc | awk '{print $$1}'))
+	LINES=20 top -b -d 1 -n $(DURATION) -w > $(RESULT_TOP_DIR)/$(n).log
+
+.PHONY: dstat
+dstat:
+	mkdir -p $(RESULT_DSTAT_DIR)
+	$(eval n := $(shell (ls -l $(RESULT_DSTAT_DIR) || echo 1) | wc | awk '{print $$1}'))
+	dstat -tcdm --tcp -n 1 $(DURATION) > $(RESULT_DSTAT_DIR)/$(n).log
 
 .PHONY: slow-query
 slow-query:
@@ -42,7 +54,12 @@ slow-query:
 
 .PHONY: bench
 bench: rotate
+	# Stats
+	$(MAKE) top &
+	$(MAKE) dstat &
 	cd $(BENCH_DIR) && ./run_k6_and_score.sh
+	$(MAKE) slow-query
+	$(MAKE) alp
 
 .PHONY: build
 build:
