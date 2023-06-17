@@ -1,5 +1,6 @@
 import express from "express";
-import { execSync } from "child_process";
+//import { execSync } from "child_process";
+import { promises as fs } from 'fs';
 import { getUsers } from "./repository";
 import { getUserByUserId } from "./repository";
 import { getFileByFileId } from "../files/repository";
@@ -28,11 +29,15 @@ usersRouter.get(
         console.warn("specified user icon not found");
         return;
       }
-      const path = userIcon.path;
+      const path = userIcon.path + ".500x500";
+	  /*
       // 500px x 500pxでリサイズ
+	  console.log(userIcon);
       const data = execSync(`convert ${path} -resize 500x500! PNG:-`, {
         shell: "/bin/bash",
       });
+	  */
+	  const data = await fs.readFile(path);
       res.status(200).json({
         fileName: userIcon.fileName,
         data: data.toString("base64"),
