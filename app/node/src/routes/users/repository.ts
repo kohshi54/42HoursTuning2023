@@ -241,19 +241,33 @@ export const getUserForFilter = async (
 ): Promise<UserForFilter> => {
   let userRows: RowDataPacket[];
   if (!userId) {
-	  let uuid=uuidv4();
-    [userRows] = await pool.query<RowDataPacket[]>(
-      "SELECT user_id, user_name, office_id, user_icon_id FROM user WHERE user_id >= ? limit 1",
-      [uuid]
-    );
-  } else {
-    [userRows] = await pool.query<RowDataPacket[]>(
-      "SELECT user_id, user_name, office_id, user_icon_id FROM user WHERE user_id = ?",
+	userId = uuidv4();
+  }
+  //"SELECT user_id, user_name, office_id, user_icon_id FROM user WHERE user_id >= ? LIMIT 1",
+  let sql = `SELECT
+		u.user_id,
+		u.user_name,
+		u.office_id,
+		u.user_icon_id,
+		d.department_name,
+		o.office_name,
+		f.file_name
+	FROM
+		user u
+		JOIN department_role_member drm USING(user_id)
+		JOIN department d USING(department_id)
+		JOIN office o USING(office_id)
+		JOIN file f ON u.user_icon_id = f.file_id
+	WHERE
+		user_id >= ?
+	LIMIT 1;`;
+  [userRows] = await pool.query<RowDataPacket[]>(
+      sql,
       [userId]
     );
-  }
   const user = userRows[0];
 
+  /*
   const [officeNameRow] = await pool.query<RowDataPacket[]>(
     `SELECT office_name FROM office WHERE office_id = ?`,
     [user.office_id]
@@ -266,14 +280,17 @@ export const getUserForFilter = async (
     `SELECT department_name FROM department WHERE department_id = (SELECT department_id FROM department_role_member WHERE user_id = ? AND belong = true)`,
     [user.user_id]
   );
+ */
   const [skillNameRows] = await pool.query<RowDataPacket[]>(
     `SELECT skill_name FROM skill WHERE skill_id IN (SELECT skill_id FROM skill_member WHERE user_id = ?)`,
     [user.user_id]
   );
 
+  /*
   user.office_name = officeNameRow[0].office_name;
   user.file_name = fileNameRow[0].file_name;
   user.department_name = departmentNameRow[0].department_name;
+ */
   user.skill_names = skillNameRows.map((row) => row.skill_name);
 
   return convertToUserForFilter(user);
