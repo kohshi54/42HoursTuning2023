@@ -7,6 +7,7 @@ VIMRC_PATH:=$(HOME)/.vimrc
 
 REPO_DIR:=$(HOME)/42HoursTuning2023
 APP_DIR:=$(REPO_DIR)/app
+BENCH_DIR:=$(REPO_DIR)/benchmarker
 
 TOOL_CONFIG_DIR:=$(REPO_DIR)/tool-config
 
@@ -20,7 +21,7 @@ RESULT_DIR:=$(REPO_DIR)/results
 # RESULT_TOP_DIR:=$(RESULT_DIR)/top
 # RESULT_DSTAT_DIR:=$(RESULT_DIR)/dstat
 # RESULT_APP_DIR:=$(RESULT_DIR)/app
-# RESULT_SLOW_DIR:=$(RESULT_DIR)/slow
+RESULT_SLOW_DIR:=$(RESULT_DIR)/slow
 RESULT_ALP_DIR:=$(RESULT_DIR)/alp
 
 NGINX_LOGDIR:=$(APP_DIR)/nginx/log
@@ -29,6 +30,35 @@ NGINX_ERROR_LOG:=$(NGINX_LOGDIR)/error.log
 DB_LOGDIR:=$(APP_DIR)/mysql/log
 DB_SLOW_LOG:=$(DB_LOGDIR)/mysql-slow.log
 DB_ERROR_LOG:=$(DB_LOGDIR)/error.log
+
+.PHONY: slow-query
+slow-query:
+	mkdir -p $(RESULT_SLOW_DIR)
+	$(eval n := $(shell (ls -l $(RESULT_SLOW_DIR) || echo 1) | wc | awk '{print $$1}'))
+	#sudo pt-query-digest --explain h=$(MYSQL_HOST),u=$(MYSQL_USER),p=$(MYSQL_PASS) $(DB_SLOW_LOG) \
+	#	| tee $(RESULT_SLOW_DIR)/$(n).digest
+	pt-query-digest $(DB_SLOW_LOG) \
+		| tee $(RESULT_SLOW_DIR)/$(n).digest
+
+.PHONY: bench
+bench: rotate
+	cd $(BENCH_DIR) && ./run_k6_and_score.sh
+
+.PHONY: build
+build:
+	cd $(APP_DIR) && docker compose build
+
+.PHONY: restart
+restart:
+	cd $(APP_DIR) && docker compose up -d
+
+.PHONY: rotate
+rotate:
+	sudo truncate $(NGINX_LOG) -s 0
+	sudo truncate $(NGINX_ERROR_LOG) -s 0
+	sudo truncate $(DB_SLOW_LOG) -s 0
+	sudo truncate $(DB_ERROR_LOG) -s 0
+	make restart
 
 .PHONY: alp
 alp:

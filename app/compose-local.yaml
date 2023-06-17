@@ -40,5 +40,6 @@ services:
       - ./mysql/mysql_migration:/etc/mysql/mysql_migration
       - ./mysql/mysql.conf:/etc/mysql/conf.d/mysql.cnf
       - ./mysql/log:/var/log/mysql
+    user: "1000:1000"
     restart:
       always
