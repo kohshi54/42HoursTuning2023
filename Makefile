@@ -11,7 +11,7 @@ TRDSQL_DIR:=$(HOME)/tool-config/trdsql
 TRDSQL_SQL:=$(TRDSQL_DIR)/access.sql
 
 .PHONY: setup
-setup: keygen install-tools oh-my-zsh
+setup: keygen install-tools oh-my-zsh zsh-setup
 
 .PHONY: keygen
 keygen:
