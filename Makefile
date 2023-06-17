@@ -59,6 +59,9 @@ bench: rotate
 	$(MAKE) dstat &
 	cd $(BENCH_DIR) && ./run_k6_and_score.sh
 	$(MAKE) alp
+.PHONY: e2e
+e2e:build restart
+	cd $(BENCH_DIR) && ./e2e.sh
 
 .PHONY: build
 build:
