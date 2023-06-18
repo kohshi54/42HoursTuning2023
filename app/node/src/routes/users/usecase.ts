@@ -1,49 +1,98 @@
 import { Target, SearchedUser } from "../../model/types";
+import { RowDataPacket } from "mysql2";
+import pool from "../../util/mysql";
 import {
-  getUsersByUserName,
-  getUsersByKana,
-  getUsersByMail,
-  getUsersByDepartmentName,
-  getUsersByRoleName,
-  getUsersByOfficeName,
-  getUsersBySkillName,
-  getUsersByGoal,
+  getUsersByUserIds,
 } from "./repository";
 
 export const getUsersByKeyword = async (
   keyword: string,
-  targets: Target[]
+  targets: Target[],
+  limit: number,
+  offset: number
 ): Promise<SearchedUser[]> => {
-  let users: SearchedUser[] = [];
+  let query = "";
+  let args: any[] = [];
   for (const target of targets) {
-    const oldLen = users.length;
+	if (query != "") { query += " UNION "; }
     switch (target) {
       case "userName":
-        users = users.concat(await getUsersByUserName(keyword));
+		query += " (SELECT user_id, entry_date, kana FROM user WHERE MATCH(user_name) AGAINST(? IN BOOLEAN MODE)) ";
+		args.push(keyword);
         break;
       case "kana":
-        users = users.concat(await getUsersByKana(keyword));
+		query += " (SELECT user_id, entry_date, kana FROM user WHERE MATCH(kana) AGAINST(? IN BOOLEAN MODE)) ";
+		args.push(keyword);
         break;
       case "mail":
-        users = users.concat(await getUsersByMail(keyword));
+		query += " (SELECT user_id, entry_date, kana FROM user WHERE MATCH(mail) AGAINST(? IN BOOLEAN MODE)) ";
+		args.push(keyword);
         break;
       case "department":
-        users = users.concat(await getUsersByDepartmentName(keyword));
+		query += ` (SELECT user_id, u.entry_date, kana
+			FROM
+				user AS u  
+				JOIN department_role_member AS drm USING(user_id)
+				JOIN department AS d USING(department_id)
+			WHERE
+				department_name LIKE ?
+				AND
+				drm.belong = true)
+				`;
+		args.push(`%${keyword}%`);
         break;
       case "role":
-        users = users.concat(await getUsersByRoleName(keyword));
+		query += ` (SELECT user_id, u.entry_date, kana
+			FROM
+				user AS u  
+				JOIN department_role_member AS drm USING(user_id)
+				JOIN role AS r USING(role_Id)
+			WHERE
+				role_name LIKE ?
+				AND
+				drm.belong = true)
+				`;
+		args.push(`%${keyword}%`);
         break;
       case "office":
-        users = users.concat(await getUsersByOfficeName(keyword));
+		query += ` (SELECT user_id, u.entry_date, kana
+			FROM
+				user AS u  
+				JOIN office AS o USING(office_id)
+			WHERE
+				office_name LIKE ?)
+				`;
+		args.push(`%${keyword}%`);
         break;
       case "skill":
-        users = users.concat(await getUsersBySkillName(keyword));
+		query += ` (SELECT user_id, u.entry_date, kana
+			FROM
+				user AS u  
+				JOIN skill_member AS sm USING(user_id)
+				JOIN skill AS s USING(skill_id)
+			WHERE
+				skill_name LIKE ?)
+				`;
+		args.push(`%${keyword}%`);
         break;
       case "goal":
-        users = users.concat(await getUsersByGoal(keyword));
+		query += " (SELECT user_id, entry_date, kana FROM user WHERE MATCH(goal) AGAINST(? IN BOOLEAN MODE)) ";
+		args.push(keyword);
         break;
     }
-    console.log(`${users.length - oldLen} users found by ${target}`);
   }
+  query = `
+  SELECT
+  	user_id
+  FROM
+  	( ${query} ) AS combined
+  ORDER BY
+  	entry_date ASC, kana ASC
+  LIMIT ? OFFSET ? `;
+  args.push(limit);
+  args.push(offset);
+  const [rows] = await pool.query<RowDataPacket[]>(query,args);
+  const userIds: string[] = rows.map((row) => row.user_id);
+  const users = getUsersByUserIds(userIds);
   return users;
 };
