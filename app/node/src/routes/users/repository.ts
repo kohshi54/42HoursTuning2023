@@ -255,8 +255,8 @@ export const getUserForOwner = async (
 			JOIN department d USING(department_id)
 			JOIN office o USING(office_id)
 			JOIN file f ON u.user_icon_id = f.file_id
-			JOIN skill_member sm USING(user_id)
-			JOIN skill s USING(skill_id)
+			LEFT JOIN skill_member sm USING(user_id)
+			LEFT JOIN skill s USING(skill_id)
 		WHERE
 			u.user_id = ? AND drm.belong = 1`;
   [userRows] = await pool.query<RowDataPacket[]>(
@@ -288,8 +288,8 @@ export const getUserForFilter = async (
 			JOIN department_role_member drm USING(user_id)
 			JOIN department d USING(department_id)
 			JOIN office o USING(office_id)
-			JOIN skill_member sm USING(user_id)
-			JOIN skill s USING(skill_id) `
+			LEFT JOIN skill_member sm USING(user_id)
+			LEFT JOIN skill s USING(skill_id) `
 			;
   let condition = " WHERE user_id NOT IN (?) AND drm.belong = true ";
   let args: any[] = [members.map((row) => row.userId)];
@@ -351,7 +351,6 @@ export const getUserForFilter = async (
     );
 
   const users = userIdRows;
-console.log(userIdRows, users, userRows);
   users.forEach((o, i, a) => a[i].user_name = userRows.find((u) => u.user_id == o.user_id)!.user_name as string);
   users.forEach((o, i, a) => a[i].office_id = userRows.find((u) => u.user_id == o.user_id)!.office_id as string);
   users.forEach((o, i, a) => a[i].office_name = userRows.find((u) => u.user_id == o.user_id)!.office_name as string);
