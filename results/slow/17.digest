@@ -1,0 +1,488 @@
+
+# 4s user time, 10ms system time, 30.85M rss, 36.04M vsz
+# Current date: Sun Jun 18 03:26:52 2023
+# Hostname: env-elephant
+# Files: /home/azureuser/42HoursTuning2023/app/mysql/log/mysql-slow.log
+# Overall: 48.08k total, 23 unique, 304.33 QPS, 0.73x concurrency ________
+# Time range: 2023-06-18T03:24:06 to 2023-06-18T03:26:44
+# Attribute          total     min     max     avg     95%  stddev  median
+# ============     ======= ======= ======= ======= ======= ======= =======
+# Exec time           116s    53us   263ms     2ms    16ms     9ms   119us
+# Lock time          270ms       0    24ms     5us     2us   185us     1us
+# Rows sent        103.37k       0     100    2.20   15.25    5.23    0.99
+# Rows examine       3.56M       0   8.22k   77.55   59.77  672.98    0.99
+# Query size         5.66M      57   1.31k  123.51  246.02  103.49   84.10
+
+# Profile
+# Rank Query ID                       Response time Calls R/Call V/M   Ite
+# ==== ============================== ============= ===== ====== ===== ===
+#    1 0xF6955FD86529BC5F0FDF8DC40... 31.2163 26.9%  1336 0.0234  0.01 INSERT match_group_member
+#    2 0x4D37284FF966F7FC50B187A5C... 27.5563 23.7%  1234 0.0223  0.01 INSERT session
+#    3 0x17EF7FE04A5BBC3CB7E4577B7... 23.3613 20.1%   333 0.0702  0.02 SELECT user department_role_member department office skill_member skill match_group_member
+#    4 0x2393BE92CA9736C92CE4D7E3C...  8.1774  7.0%   334 0.0245  0.01 INSERT match_group
+#    5 0x8E7E802E4E42309A945285CD8...  3.3055  2.8%  1822 0.0018  0.01 SELECT user office file
+#    6 0xD4886D5B2CF8FB673CC9497D1...  3.0887  2.7%   334 0.0092  0.02 SELECT user department_role_member department office file skill_member skill
+#    7 0xB5EB808E197DBDB5C2DE090CC...  2.7193  2.3%  9641 0.0003  0.01 SELECT user
+#    8 0x788721E708791435512BAE8B1...  2.7117  2.3%  1237 0.0022  0.01 SELECT session
+#    9 0xA36C92A25707033E2E66254FC...  2.4582  2.1%  9801 0.0003  0.00 SELECT office
+#   10 0x58CF7EFC0668757DA80223081...  2.3943  2.1%  9801 0.0002  0.01 SELECT file
+#   11 0x86360B957559F315556E2E268...  1.7366  1.5%  4893 0.0004  0.01 SELECT session
+#   12 0xB435C99BC6D23067A7C0D4AF4...  1.6556  1.4%   334 0.0050  0.02 SELECT user department_role_member department office file skill_member skill
+# MISC 0xMISC                          5.6756  4.9%  6984 0.0008   0.0 <11 ITEMS>
+
+# Query 1: 10.60 QPS, 0.25x concurrency, ID 0xF6955FD86529BC5F0FDF8DC4028CFF30 at byte 7608685
+# This item is included in the report because it matches --limit.
+# Scores: V/M = 0.01
+# Time range: 2023-06-18T03:24:09 to 2023-06-18T03:26:15
+# Attribute    pct   total     min     max     avg     95%  stddev  median
+# ============ === ======= ======= ======= ======= ======= ======= =======
+# Count          2    1336
+# Exec time     26     31s     7ms    95ms    23ms    53ms    14ms    18ms
+# Lock time      3    10ms       0     5ms     7us     1us   133us     1us
+# Rows sent      0       0       0       0       0       0       0       0
+# Rows examine   0       0       0       0       0       0       0       0
+# Query size     3 180.07k     120     144  138.02  143.84   11.03  143.84
+# String:
+# Hosts        192.168.64.4
+# Users        mysql
+# Query_time distribution
+#   1us
+#  10us
+# 100us
+#   1ms  #####
+#  10ms  ################################################################
+# 100ms
+#    1s
+#  10s+
+# Tables
+#    SHOW TABLE STATUS LIKE 'match_group_member'\G
+#    SHOW CREATE TABLE `match_group_member`\G
+INSERT INTO match_group_member (match_group_id, user_id) VALUES ('0c4d2bfc-1930-4524-b3b2-d484413f545e', '203a3d5f-0647-4a68-b63a-eafb05c74a27')\G
+
+# Query 2: 19.90 QPS, 0.44x concurrency, ID 0x4D37284FF966F7FC50B187A5C329B44F at byte 3974983
+# This item is included in the report because it matches --limit.
+# Scores: V/M = 0.01
+# Time range: 2023-06-18T03:24:06 to 2023-06-18T03:25:08
+# Attribute    pct   total     min     max     avg     95%  stddev  median
+# ============ === ======= ======= ======= ======= ======= ======= =======
+# Count          2    1234
+# Exec time     23     28s     5ms    91ms    22ms    51ms    13ms    18ms
+# Lock time      1     5ms       0     2ms     4us     2us    54us     1us
+# Rows sent      0       0       0       0       0       0       0       0
+# Rows examine   0       0       0       0       0       0       0       0
+# Query size     3 210.89k     175     175     175     175       0     175
+# String:
+# Hosts        192.168.64.4
+# Users        mysql
+# Query_time distribution
+#   1us
+#  10us
+# 100us
+#   1ms  ######
+#  10ms  ################################################################
+# 100ms
+#    1s
+#  10s+
+# Tables
+#    SHOW TABLE STATUS LIKE 'session'\G
+#    SHOW CREATE TABLE `session`\G
+INSERT INTO session (session_id, linked_user_id, created_at) VALUES ('5b6bd696-c7e9-4b62-b371-22bf299b082a', 'c2c1f09b-598c-4e12-9f41-f6b59bcd062f', '2023-06-18 03:24:28.167')\G
+
+# Query 3: 5.55 QPS, 0.39x concurrency, ID 0x17EF7FE04A5BBC3CB7E4577B70E1DF7E at byte 5153808
+# This item is included in the report because it matches --limit.
+# Scores: V/M = 0.02
+# Time range: 2023-06-18T03:24:09 to 2023-06-18T03:25:09
+# Attribute    pct   total     min     max     avg     95%  stddev  median
+# ============ === ======= ======= ======= ======= ======= ======= =======
+# Count          0     333
+# Exec time     20     23s    15ms   263ms    70ms   155ms    41ms    61ms
+# Lock time      1     3ms     2us     1ms     9us     5us    65us     3us
+# Rows sent      0     999       3       3       3       3       0       3
+# Rows examine  73   2.62M   7.89k   8.22k   8.05k   8.06k  165.50   7.68k
+# Query size     3 183.74k     565     565     565     565       0     565
+# String:
+# Hosts        192.168.64.4
+# Users        mysql
+# Query_time distribution
+#   1us
+#  10us
+# 100us
+#   1ms
+#  10ms  ################################################################
+# 100ms  ####################
+#    1s
+#  10s+
+# Tables
+#    SHOW TABLE STATUS LIKE 'user'\G
+#    SHOW CREATE TABLE `user`\G
+#    SHOW TABLE STATUS LIKE 'department_role_member'\G
+#    SHOW CREATE TABLE `department_role_member`\G
+#    SHOW TABLE STATUS LIKE 'department'\G
+#    SHOW CREATE TABLE `department`\G
+#    SHOW TABLE STATUS LIKE 'office'\G
+#    SHOW CREATE TABLE `office`\G
+#    SHOW TABLE STATUS LIKE 'skill_member'\G
+#    SHOW CREATE TABLE `skill_member`\G
+#    SHOW TABLE STATUS LIKE 'skill'\G
+#    SHOW CREATE TABLE `skill`\G
+#    SHOW TABLE STATUS LIKE 'match_group_member'\G
+#    SHOW CREATE TABLE `match_group_member`\G
+# EXPLAIN /*!50100 PARTITIONS*/
+SELECT
+			DISTINCT u.user_id
+		FROM
+			user u
+			JOIN department_role_member drm USING(user_id)
+			JOIN department d USING(department_id)
+			JOIN office o USING(office_id)
+			JOIN skill_member sm USING(user_id)
+			JOIN skill s USING(skill_id)  WHERE user_id NOT IN ('test-user-id') AND drm.belong = true  AND department_id = '6cb90ed8-6335-4fc2-b052-07abebf4745e'  AND office_id = '73509174-8f0d-4329-8050-22664a42ef5a'  AND s.skill_name IN ('簿記3級')  AND user_id NOT IN (SELECT DISTINCT user_id FROM match_group_member WHERE user_id = 'test-user-id')  LIMIT 3\G
+
+# Query 4: 2.65 QPS, 0.06x concurrency, ID 0x2393BE92CA9736C92CE4D7E3CCFA7354 at byte 7611025
+# This item is included in the report because it matches --limit.
+# Scores: V/M = 0.01
+# Time range: 2023-06-18T03:24:09 to 2023-06-18T03:26:15
+# Attribute    pct   total     min     max     avg     95%  stddev  median
+# ============ === ======= ======= ======= ======= ======= ======= =======
+# Count          0     334
+# Exec time      7      8s     7ms    86ms    24ms    59ms    15ms    19ms
+# Lock time      0     3ms       0     2ms     7us     2us    91us     1us
+# Rows sent      0       0       0       0       0       0       0       0
+# Rows examine   0       0       0       0       0       0       0       0
+# Query size     1  79.58k     236     244  243.98  234.30       0  234.30
+# String:
+# Hosts        192.168.64.4
+# Users        mysql
+# Query_time distribution
+#   1us
+#  10us
+# 100us
+#   1ms  #####
+#  10ms  ################################################################
+# 100ms
+#    1s
+#  10s+
+# Tables
+#    SHOW TABLE STATUS LIKE 'match_group'\G
+#    SHOW CREATE TABLE `match_group`\G
+INSERT INTO match_group (match_group_id, match_group_name, description, status, created_by, created_at) VALUES ('87e5070e-cf1a-4945-9998-0af0ff766b80', 'match-group', 'match-group description', 'open', 'test-user-id', '2023-06-18 03:24:48.986')\G
+
+# Query 5: 11.53 QPS, 0.02x concurrency, ID 0x8E7E802E4E42309A945285CD86E9E2D3 at byte 5135371
+# This item is included in the report because it matches --limit.
+# Scores: V/M = 0.01
+# Time range: 2023-06-18T03:24:06 to 2023-06-18T03:26:44
+# Attribute    pct   total     min     max     avg     95%  stddev  median
+# ============ === ======= ======= ======= ======= ======= ======= =======
+# Count          3    1822
+# Exec time      2      3s   202us    73ms     2ms     8ms     5ms   366us
+# Lock time      3    10ms     1us     4ms     5us     2us    91us     1us
+# Rows sent     34  35.90k      20     100   20.18   19.46    3.65   19.46
+# Rows examine   2 107.70k      60     300   60.53   59.77   11.20   59.77
+# Query size     7 441.27k     248     249  248.00  246.02       0  246.02
+# String:
+# Hosts        192.168.64.4
+# Users        mysql
+# Query_time distribution
+#   1us
+#  10us
+# 100us  ################################################################
+#   1ms  ################
+#  10ms  ###
+# 100ms
+#    1s
+#  10s+
+# Tables
+#    SHOW TABLE STATUS LIKE 'user'\G
+#    SHOW CREATE TABLE `user`\G
+#    SHOW TABLE STATUS LIKE 'office'\G
+#    SHOW CREATE TABLE `office`\G
+#    SHOW TABLE STATUS LIKE 'file'\G
+#    SHOW CREATE TABLE `file`\G
+# EXPLAIN /*!50100 PARTITIONS*/
+SELECT
+		u.user_id,
+		u.user_name,
+		u.office_id,
+		u.user_icon_id,
+		o.office_name,
+		f.file_name
+	FROM
+		user u
+		JOIN office o USING(office_id)
+		JOIN file f ON f.file_id = u.user_icon_id
+	ORDER BY
+		entry_date ASC, kana ASC
+	LIMIT
+		20 OFFSET 0\G
+
+# Query 6: 2.65 QPS, 0.02x concurrency, ID 0xD4886D5B2CF8FB673CC9497D1FE1FA88 at byte 9407338
+# This item is included in the report because it matches --limit.
+# Scores: V/M = 0.02
+# Time range: 2023-06-18T03:24:09 to 2023-06-18T03:26:15
+# Attribute    pct   total     min     max     avg     95%  stddev  median
+# ============ === ======= ======= ======= ======= ======= ======= =======
+# Count          0     334
+# Exec time      2      3s     1ms   109ms     9ms    31ms    15ms     4ms
+# Lock time     11    30ms     2us    24ms    90us     6us     1ms     3us
+# Rows sent      2   2.94k       9       9       9       9       0       9
+# Rows examine   0  32.94k     101     101     101     101       0     101
+# Query size     3 192.12k     589     589     589     589       0     589
+# String:
+# Hosts        192.168.64.4
+# Users        mysql
+# Query_time distribution
+#   1us
+#  10us
+# 100us
+#   1ms  ################################################################
+#  10ms  ####################
+# 100ms  #
+#    1s
+#  10s+
+# Tables
+#    SHOW TABLE STATUS LIKE 'user'\G
+#    SHOW CREATE TABLE `user`\G
+#    SHOW TABLE STATUS LIKE 'department_role_member'\G
+#    SHOW CREATE TABLE `department_role_member`\G
+#    SHOW TABLE STATUS LIKE 'department'\G
+#    SHOW CREATE TABLE `department`\G
+#    SHOW TABLE STATUS LIKE 'office'\G
+#    SHOW CREATE TABLE `office`\G
+#    SHOW TABLE STATUS LIKE 'file'\G
+#    SHOW CREATE TABLE `file`\G
+#    SHOW TABLE STATUS LIKE 'skill_member'\G
+#    SHOW CREATE TABLE `skill_member`\G
+#    SHOW TABLE STATUS LIKE 'skill'\G
+#    SHOW CREATE TABLE `skill`\G
+# EXPLAIN /*!50100 PARTITIONS*/
+SELECT
+			u.user_id,
+			u.user_name,
+			u.office_id,
+			o.office_name,
+			u.user_icon_id,
+			d.department_id,
+			d.department_name,
+			f.file_name,
+			s.skill_name
+		FROM
+			user u
+			JOIN department_role_member drm USING(user_id)
+			JOIN department d USING(department_id)
+			JOIN office o USING(office_id)
+			JOIN file f ON u.user_icon_id = f.file_id
+			JOIN skill_member sm USING(user_id)
+			JOIN skill s USING(skill_id)
+		WHERE
+			u.user_id IN ('04c0d19e-fcb4-4ed7-a46b-9ae921a1d028', '203a3d5f-0647-4a68-b63a-eafb05c74a27', '2a16d6a3-1fa2-4dfb-a5d7-25035e27c784') AND drm.belong = true\G
+
+# Query 7: 75.91 QPS, 0.02x concurrency, ID 0xB5EB808E197DBDB5C2DE090CC958425D at byte 3463949
+# This item is included in the report because it matches --limit.
+# Scores: V/M = 0.01
+# Time range: 2023-06-18T03:24:09 to 2023-06-18T03:26:16
+# Attribute    pct   total     min     max     avg     95%  stddev  median
+# ============ === ======= ======= ======= ======= ======= ======= =======
+# Count         20    9641
+# Exec time      2      3s    63us    61ms   282us   515us     1ms   119us
+# Lock time      8    23ms       0     2ms     2us     1us    31us     1us
+# Rows sent      9   9.42k       1       1       1       1       0       1
+# Rows examine   0   9.42k       1       1       1       1       0       1
+# Query size    21   1.22M     109     133  132.17  130.47    4.22  130.47
+# String:
+# Hosts        192.168.64.4
+# Users        mysql
+# Query_time distribution
+#   1us
+#  10us  ######
+# 100us  ################################################################
+#   1ms  ##
+#  10ms  #
+# 100ms
+#    1s
+#  10s+
+# Tables
+#    SHOW TABLE STATUS LIKE 'user'\G
+#    SHOW CREATE TABLE `user`\G
+# EXPLAIN /*!50100 PARTITIONS*/
+SELECT user_id, user_name, kana, entry_date, office_id, user_icon_id FROM user WHERE user_id = '03d2e158-c941-48ba-a763-80d35e0fa391'\G
+
+# Query 8: 7.83 QPS, 0.02x concurrency, ID 0x788721E708791435512BAE8B1CE461F2 at byte 5143449
+# This item is included in the report because it matches --limit.
+# Scores: V/M = 0.01
+# Time range: 2023-06-18T03:24:06 to 2023-06-18T03:26:44
+# Attribute    pct   total     min     max     avg     95%  stddev  median
+# ============ === ======= ======= ======= ======= ======= ======= =======
+# Count          2    1237
+# Exec time      2      3s   103us    62ms     2ms    12ms     6ms   490us
+# Lock time      1     3ms       0   626us     2us     1us    17us     1us
+# Rows sent      0       3       0       1    0.00       0    0.05       0
+# Rows examine  20 731.46k       1   1.21k  605.51   1.09k  343.25  592.07
+# Query size     1 100.24k      59      83   82.98   80.10    0.66   80.10
+# String:
+# Hosts        192.168.64.4
+# Users        mysql
+# Query_time distribution
+#   1us
+#  10us
+# 100us  ################################################################
+#   1ms  ################
+#  10ms  #####
+# 100ms
+#    1s
+#  10s+
+# Tables
+#    SHOW TABLE STATUS LIKE 'session'\G
+#    SHOW CREATE TABLE `session`\G
+# EXPLAIN /*!50100 PARTITIONS*/
+SELECT * FROM session WHERE linked_user_id = 'ceb850f2-4ce7-42cf-82ca-11b39845f3a6'\G
+
+# Query 9: 62.03 QPS, 0.02x concurrency, ID 0xA36C92A25707033E2E66254FCD07F8E4 at byte 5140248
+# This item is included in the report because it matches --limit.
+# Scores: V/M = 0.00
+# Time range: 2023-06-18T03:24:06 to 2023-06-18T03:26:44
+# Attribute    pct   total     min     max     avg     95%  stddev  median
+# ============ === ======= ======= ======= ======= ======= ======= =======
+# Count         20    9801
+# Exec time      2      2s    55us    26ms   250us   424us     1ms   103us
+# Lock time     11    31ms       0     7ms     3us     1us    80us     1us
+# Rows sent      9   9.57k       1       1       1       1       0       1
+# Rows examine   0   9.57k       1       1       1       1       0       1
+# Query size    14 832.70k      87      87      87      87       0      87
+# String:
+# Hosts        192.168.64.4
+# Users        mysql
+# Query_time distribution
+#   1us
+#  10us  ########################
+# 100us  ################################################################
+#   1ms  ##
+#  10ms  #
+# 100ms
+#    1s
+#  10s+
+# Tables
+#    SHOW TABLE STATUS LIKE 'office'\G
+#    SHOW CREATE TABLE `office`\G
+# EXPLAIN /*!50100 PARTITIONS*/
+SELECT office_name FROM office WHERE office_id = '0e1dc1c5-bcd3-4be8-9852-e3a396144109'\G
+
+# Query 10: 62.03 QPS, 0.02x concurrency, ID 0x58CF7EFC0668757DA802230818738B53 at byte 3463674
+# This item is included in the report because it matches --limit.
+# Scores: V/M = 0.01
+# Time range: 2023-06-18T03:24:06 to 2023-06-18T03:26:44
+# Attribute    pct   total     min     max     avg     95%  stddev  median
+# ============ === ======= ======= ======= ======= ======= ======= =======
+# Count         20    9801
+# Exec time      2      2s    53us    66ms   244us   424us     1ms   103us
+# Lock time     19    53ms       0    16ms     5us     1us   218us     1us
+# Rows sent      9   9.57k       1       1       1       1       0       1
+# Rows examine   0   9.57k       1       1       1       1       0       1
+# Query size    12 752.26k      57      81   78.60   80.10    6.96   80.10
+# String:
+# Hosts        192.168.64.4
+# Users        mysql
+# Query_time distribution
+#   1us
+#  10us  ########################
+# 100us  ################################################################
+#   1ms  ##
+#  10ms  #
+# 100ms
+#    1s
+#  10s+
+# Tables
+#    SHOW TABLE STATUS LIKE 'file'\G
+#    SHOW CREATE TABLE `file`\G
+# EXPLAIN /*!50100 PARTITIONS*/
+SELECT file_name FROM file WHERE file_id = '6bb1de15-9eee-403c-98f4-35219132f053'\G
+
+# Query 11: 30.97 QPS, 0.01x concurrency, ID 0x86360B957559F315556E2E2683E69B09 at byte 3464276
+# This item is included in the report because it matches --limit.
+# Scores: V/M = 0.01
+# Time range: 2023-06-18T03:24:06 to 2023-06-18T03:26:44
+# Attribute    pct   total     min     max     avg     95%  stddev  median
+# ============ === ======= ======= ======= ======= ======= ======= =======
+# Count         10    4893
+# Exec time      1      2s    68us    43ms   354us   596us     2ms   119us
+# Lock time     16    44ms       0    11ms     8us     1us   210us     1us
+# Rows sent      4   4.78k       1       1       1       1       0       1
+# Rows examine   0   4.78k       1       1       1       1       0       1
+# Query size     5 304.56k      58      79   63.74   76.28    8.63   56.92
+# String:
+# Hosts        192.168.64.4
+# Users        mysql
+# Query_time distribution
+#   1us
+#  10us  ###
+# 100us  ################################################################
+#   1ms  ##
+#  10ms  #
+# 100ms
+#    1s
+#  10s+
+# Tables
+#    SHOW TABLE STATUS LIKE 'session'\G
+#    SHOW CREATE TABLE `session`\G
+# EXPLAIN /*!50100 PARTITIONS*/
+SELECT * FROM session WHERE session_id = '56b6074b-0cbb-4876-a2fa-f69fe69bfb46'\G
+
+# Query 12: 2.65 QPS, 0.01x concurrency, ID 0xB435C99BC6D23067A7C0D4AF4E85E3EB at byte 3463000
+# This item is included in the report because it matches --limit.
+# Scores: V/M = 0.02
+# Time range: 2023-06-18T03:24:09 to 2023-06-18T03:26:15
+# Attribute    pct   total     min     max     avg     95%  stddev  median
+# ============ === ======= ======= ======= ======= ======= ======= =======
+# Count          0     334
+# Exec time      1      2s   509us    71ms     5ms    22ms     9ms     1ms
+# Lock time      2     5ms     2us     3ms    16us     6us   144us     3us
+# Rows sent      0    1002       3       3       3       3       0       3
+# Rows examine   0  16.64k      51      55   51.01   49.17    0.28   49.17
+# Query size     2 156.26k     479     503  479.07  463.90    1.27  463.90
+# String:
+# Hosts        192.168.64.4
+# Users        mysql
+# Query_time distribution
+#   1us
+#  10us
+# 100us  ########################################################
+#   1ms  ################################################################
+#  10ms  #####################
+# 100ms
+#    1s
+#  10s+
+# Tables
+#    SHOW TABLE STATUS LIKE 'user'\G
+#    SHOW CREATE TABLE `user`\G
+#    SHOW TABLE STATUS LIKE 'department_role_member'\G
+#    SHOW CREATE TABLE `department_role_member`\G
+#    SHOW TABLE STATUS LIKE 'department'\G
+#    SHOW CREATE TABLE `department`\G
+#    SHOW TABLE STATUS LIKE 'office'\G
+#    SHOW CREATE TABLE `office`\G
+#    SHOW TABLE STATUS LIKE 'file'\G
+#    SHOW CREATE TABLE `file`\G
+#    SHOW TABLE STATUS LIKE 'skill_member'\G
+#    SHOW CREATE TABLE `skill_member`\G
+#    SHOW TABLE STATUS LIKE 'skill'\G
+#    SHOW CREATE TABLE `skill`\G
+# EXPLAIN /*!50100 PARTITIONS*/
+SELECT
+			u.user_id,
+			u.user_name,
+			u.office_id,
+			o.office_name,
+			u.user_icon_id,
+			d.department_id,
+			d.department_name,
+			f.file_name,
+			s.skill_name
+		FROM
+			user u
+			JOIN department_role_member drm USING(user_id)
+			JOIN department d USING(department_id)
+			JOIN office o USING(office_id)
+			JOIN file f ON u.user_icon_id = f.file_id
+			JOIN skill_member sm USING(user_id)
+			JOIN skill s USING(skill_id)
+		WHERE
+			u.user_id = 'test-user-id' AND drm.belong = 1\G

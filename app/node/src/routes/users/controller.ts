@@ -31,8 +31,8 @@ usersRouter.get(
         console.warn("specified user icon not found");
         return;
       }
-	  if (icons[path]) {
-		  const path = userIcon.path + ".500x500";
+	  const path = userIcon.path + ".500x500";
+	  if (!icons[path]) {
 		  const data = await fs.readFile(path);
 		  icons[path] = data.toString("base64");
 	  }
