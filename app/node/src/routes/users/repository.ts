@@ -361,6 +361,6 @@ export const getUserForFilter = async (
   users.forEach((o, i, a) => a[i].user_name = userRows.find((u) => u.user_id == o.user_id)!.user_name as string);
   users.forEach((o, i, a) => a[i].skill_names = userRows.filter((u) => u.user_id == o.user_id).map((u) => u.skill_name));
 
-console.log(users);
+//console.log(users);
   return users.map((u) => convertToUserForFilter(u));
 };

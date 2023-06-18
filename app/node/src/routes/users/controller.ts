@@ -28,7 +28,7 @@ usersRouter.get(
           message:
             "指定されたユーザーアイコンIDのユーザーアイコン画像が見つかりません。",
         });
-        console.warn("specified user icon not found");
+        //console.warn("specified user icon not found");
         return;
       }
 	  const path = userIcon.path + ".500x500";
@@ -40,7 +40,7 @@ usersRouter.get(
         fileName: userIcon.fileName,
         data: icons[path],
       });
-      console.log("successfully get user icon");
+      //console.log("successfully get user icon");
     } catch (e) {
       next(e);
     }
@@ -68,7 +68,7 @@ usersRouter.get(
     try {
       const users = await getUsers(limit, offset);
       res.status(200).json(users);
-      console.log("successfully get users list");
+      //console.log("successfully get users list");
     } catch (e) {
       next(e);
     }
@@ -87,20 +87,20 @@ usersRouter.get(
     if (typeof keyword !== "string") {
       if (!keyword) {
         res.status(400).json({ message: "検索キーワードを指定してください。" });
-        console.warn("keyword not specified");
+        //console.warn("keyword not specified");
         return;
       }
       res
         .status(400)
         .json({ message: "検索キーワードは1つのみ指定してください。" });
-      console.warn("multiple keyword specified");
+      //console.warn("multiple keyword specified");
       return;
     }
     if (keyword.length < 2 || 50 < keyword.length) {
       res.status(400).json({
         message: "検索キーワードは2文字以上50文字以下で指定してください。",
       });
-      console.warn("specified keyword length too short or long");
+      //console.warn("specified keyword length too short or long");
       return;
     }
 
@@ -123,7 +123,7 @@ usersRouter.get(
     }
     if (!isValidTarget(targets)) {
       res.status(400).json({ message: "不正なtargetが指定されています。" });
-      console.warn("invalid target specified");
+      //console.warn("invalid target specified");
       return;
     }
 
@@ -145,7 +145,7 @@ usersRouter.get(
       );
       if (duplicateUsers.length === 0) {
         res.json([]);
-        console.log("no user found");
+        //console.log("no user found");
         return;
       }
       const users: User[] = duplicateUsers
@@ -197,7 +197,7 @@ usersRouter.get(
         });
 	  */
       res.json(users);
-      console.log(`successfully searched ${users.length} users`);
+      //console.log(`successfully searched ${users.length} users`);
     } catch (e) {
       next(e);
     }
@@ -233,11 +233,11 @@ usersRouter.get(
       const user = await getUserByUserId(userId);
       if (!user) {
         res.status(404).json({ message: "ユーザーが見つかりませんでした。" });
-        console.warn("session user is not found");
+        //console.warn("session user is not found");
         return;
       }
       res.status(200).json(user);
-      console.log("successfully get login user");
+      //console.log("successfully get login user");
     } catch (e) {
       next(e);
     }

@@ -30,7 +30,7 @@ export const createMatchGroup = async (
   const owner = await getUserForOwner(matchGroupConfig.ownerId);
   let members: UserForFilter[] = [owner];
   //const startTime = Date.now();
-  console.log("timeout = ", timeout);
+  //console.log("timeout = ", timeout);
   const candidates = await getUserForFilter(owner, 
 	matchGroupConfig.departmentFilter,
 	matchGroupConfig.officeFilter,
@@ -39,17 +39,17 @@ export const createMatchGroup = async (
 	matchGroupConfig.numOfMembers - 1,
 	members);
   members = members.concat(candidates)
-  console.log(members, candidates);
-  console.log(members.length, matchGroupConfig.numOfMembers);
+  //console.log(members, candidates);
+  //console.log(members.length, matchGroupConfig.numOfMembers);
 	if (members.length < matchGroupConfig.numOfMembers) {
-	  console.error("not all members found");
+	  //console.error("not all members found");
 	  return;
 	}
   /*
   while (members.length < matchGroupConfig.numOfMembers) {
     // デフォルトは50秒でタイムアウト
     if (Date.now() - startTime > (!timeout ? 50000 : timeout)) {
-      console.error("not all members found before timeout");
+      //console.error("not all members found before timeout");
       return;
     }
     const candidate = await getUserForFilter(owner, 
@@ -67,8 +67,8 @@ export const createMatchGroup = async (
         candidate.departmentName
       )
     ) {
-      console.log(`${candidate.userId} is not passed department filter`);
-      console.log(candidate);
+      //console.log(`${candidate.userId} is not passed department filter`);
+      //console.log(candidate);
       continue;
     } else if (
       matchGroupConfig.officeFilter !== "none" &&
@@ -78,7 +78,7 @@ export const createMatchGroup = async (
         candidate.officeName
       )
     ) {
-      console.log(`${candidate.userId} is not passed office filter`);
+      //console.log(`${candidate.userId} is not passed office filter`);
       continue;
     if (
       matchGroupConfig.skillFilter.length > 0 &&
@@ -86,15 +86,15 @@ export const createMatchGroup = async (
         candidate.skillNames.includes(skill)
       )
     ) {
-      console.log(`${candidate.userId} is not passed skill filter`);
-	  console.log(candidate);
+      //console.log(`${candidate.userId} is not passed skill filter`);
+	  //console.log(candidate);
       continue;
     if (members.some((member) => member.userId === candidate.userId)) {
-      console.log(`${candidate.userId} is already added to members`);
+      //console.log(`${candidate.userId} is already added to members`);
       continue;
     }
     members = members.concat(candidate);
-    console.log(`${candidate.userId} is added to members`);
+    //console.log(`${candidate.userId} is added to members`);
   }
 	  */
 
